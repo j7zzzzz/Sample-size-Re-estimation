@@ -1,6 +1,6 @@
 # The main code in all_function is adapted from Ye and Shao (2020), with several modifications implemented by us.
 
-#######################
+########################
 ### CA randomization ###
 ########################
 
@@ -18,11 +18,6 @@ discretize_z<-function(n,z_mean,z_sd,n_category){ # only normal
 }
 
 # simple random-----------
-# SR <- function(n, p_trt){
-#   I<-rbinom(n,1,p_trt)
-#   return(I)
-# }
-
 SR <- function(n, p_trt){
   if((n %% 2) == 0) I <- sample(c(rep(0,n/2),rep(1,n/2)))
   if((n %% 2) != 0) I <- sample( c(rep(0,n/2),rep(1,n/2),rbinom(1,1,p_trt)))
@@ -277,8 +272,3 @@ score_robust<-function(data.simu,randomization,p_trt){
   T_SR<-U/sqrt(var_cal)
   return(list(T_SR, U, var_cal)) 
 }
-
-
-
-
-
