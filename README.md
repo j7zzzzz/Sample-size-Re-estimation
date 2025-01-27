@@ -14,8 +14,8 @@ In power_calculation.R and power_calculation_interim.R, the different cases corr
 
 **SIMULATION STUDIES**
 
-case1: Corresponds to case 1 in Section 5.1.\\
-case2: Corresponds to case 2 in Section 5.1.\\
+case1: Corresponds to case 1 in Section 5.1.<br>
+case2: Corresponds to case 2 in Section 5.1.<br>
 case3_K=3: Corresponds to case 3 in Section 5.1, with $Z_1$ discretized into three groups.\\
 case3_K=4: Corresponds to case 3 in Section 5.1, with $Z_1$ discretized into four groups.\\
 case4_K=3: Corresponds to case 4 in Section 5.1, with $Z_1$ following a three-category multinomial distribution.\\
