@@ -1,4 +1,4 @@
-# The main code in all_function is adapted from Ye and Shao (2020), with several modifications implemented by us.
+# The main code in all_functions is adapted from Ye and Shao (2020), with several modifications implemented by us.
 
 ########################
 ### CA randomization ###
