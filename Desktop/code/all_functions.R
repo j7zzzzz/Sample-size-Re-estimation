@@ -1,48 +1,16 @@
+# The main code in all_function is adapted from Ye and Shao (2020), with several modifications implemented by us.
 
-#library(survival)
 #######################
 ### CA randomization ###
 ########################
 
-
-urn_design<-function(n_within_strata,omega,gamma,beta){ # Wei's urn design (Wei, 1978, JASA, Vol.73, No. 363)
-  I<-numeric(n_within_strata)
-  n_balls_0<-omega
-  n_balls_1<-omega
-  for(i in 1:n_within_strata){
-    p<-n_balls_1/(n_balls_1+n_balls_0)
-    I[i]<-rbinom(1,1,p)
-    n_balls_0<-n_balls_0+(1-I[i])*gamma+I[i]*beta
-    n_balls_1<-n_balls_1+(1-I[i])*beta+I[i]*gamma
-  }
-  return(I)
-}
-
-strata_urn_design<-function(z){
-  omega<-1
-  gamma<-0
-  beta<-1
-  n_strata<-dim(z)[2]
-  n<-dim(z)[1]
-  n_each_strata<-apply(z,2,sum)
-  I<-numeric(n)
-  for(i in 1:n_strata){
-    if(n_each_strata[i]==0) {next}
-    else if (n_each_strata[i]==1) {I[z[,i]==1]<-rbinom(1,1,0.5)}
-    else{
-      I[z[,i]==1]<-urn_design(n_each_strata[i],omega, gamma, beta)
-    }
-  }
-  return(I)
-}
-
 discretize_z<-function(n,z_mean,z_sd,n_category){ # only normal
   Z<-rnorm(n,z_mean,z_sd)
   p_cut<-seq(0,1, length.out = (n_category+1))
-  # p_cut = c(0, 0.5, 0.8, 1) #for case3_K=3
-  # p_cut = c(0, 0.4, 0.7, 0.9, 1) #for case3_K=4
-  # p_cut = c(0, 0.26, 0.74, 1) #for caseR01_3
-  # p_cut = c(0, 0.25, 0.6, 0.8, 1) #for caseL_3
+  # p_cut <- c(0, 0.5, 0.8, 1) #for case3_K=3
+  # p_cut <- c(0, 0.4, 0.7, 0.9, 1) #for case3_K=4
+  # p_cut <- c(0, 0.26, 0.74, 1) #for case3_R01
+  # p_cut <- c(0, 0.25, 0.6, 0.8, 1) #for case3_L
   q_cut<-sapply(p_cut,function(x) qnorm(x,z_mean,z_sd))
   Z_dis_scale<-as.factor(sapply(Z,function(x) max(which(q_cut<x))))
   Z_model_matrix<-model.matrix(~0+Z_dis_scale)
@@ -127,12 +95,6 @@ treatment_assignment <- function(n,strata_z,minimization_z,randomization,p_trt){
     if(p_trt!=1/2){stop("For now, the proportion of treatment under permuted_block has to be 1/2.")}
     I<-permuted_block(strata_z,4,p_trt)
     # I<-permuted_block(strata_z,10,p_trt)
-  }else if(randomization=="minimization"){
-    if(p_trt!=1/2){stop("For now, the proportion of treatment under CABC has to be 1/2.")}
-    I<-minimization(minimization_z)
-  }else if(randomization=="urn"){
-    if(p_trt!=1/2){stop("For now, the proportion of treatment under CABC has to be 1/2.")}
-    I<-strata_urn_design(strata_z)
   }
   return(I)
 }
@@ -186,27 +148,6 @@ regular_wald<-function(data.simu){
   return(wald_res)
 }
 
-# randomization test to construct reference distribution (based on regular T_LR)
-wlogrank_rand_distribution<-function(data.simu,randomization,p_trt,alpha=0.05,boot_n=200){
-  n<-dim(data.simu)[1]
-  T_logrank<-wlogrank(data.simu)$S.alt
-  strata_z<-data.simu[,grepl("strata",names(data.simu))] 
-  minimization_z<-data.simu[,grepl("minimization",names(data.simu))] 
-  LR.rand<-numeric(boot_n)
-  data.rand<-data.simu
-  for(boot in 1:boot_n){
-    I.rand<-treatment_assignment(n,strata_z,minimization_z,randomization,p_trt)
-    data.rand$I1<-I.rand
-    data.rand$I0<-1-I.rand
-    LR.rand[boot]<-wlogrank(data.rand)$S.alt
-  }
-  T_logrank.rand.ordered<-sort(LR.rand)
-  c1<-T_logrank.rand.ordered[ceiling(boot_n*alpha/2)]
-  c2<-T_logrank.rand.ordered[ceiling(boot_n*(1-alpha/2))+1]
-  T_rand_rej<-1*(T_logrank<c1 | T_logrank>c2)
-  return(T_rand_rej)
-}
-
 
 # proposed T_RL in Ye and Shao, 2020, jrssb.
 wlogrank_robust<-function(data.simu,randomization,p_trt){ # try new version 19 May
@@ -250,10 +191,6 @@ wlogrank_robust<-function(data.simu,randomization,p_trt){ # try new version 19 M
     if(p_trt!=1/2)  stop("For now, SR is only designed for pi=1/2")
     sai_2<-1/4*sum((cond_exp_0+cond_exp_1)^2 * prob_z)
     
-  }
-  if(randomization =="urn"){
-    if(p_trt!=1/2)  stop("For now, urn design is only designed for pi=1/2")
-    sai_2<-1/12*sum((cond_exp_0+cond_exp_1)^2 * prob_z)
   }
   var_cal<-n*(sai_1+sai_2)
   T_cal<-S.alt/sqrt(var_cal)
@@ -336,147 +273,12 @@ score_robust<-function(data.simu,randomization,p_trt){
     if(p_trt!=1/2)  stop("For now, SR is only designed for pi=1/2")
     sai_2<-1/4*sum((cond_exp_0+cond_exp_1)^2 * prob_z)
   }
-  if(randomization =="urn"){
-    if(p_trt!=1/2)  stop("For now, urn design is only designed for pi=1/2")
-    sai_2<-1/12*sum((cond_exp_0+cond_exp_1)^2 * prob_z)
-  }
   var_cal<-n*(sai_1+sai_2)
   T_SR<-U/sqrt(var_cal)
   return(list(T_SR, U, var_cal)) 
 }
 
-# numerator of T_S
-score_numerator<-function(data.simu){
-  data.rev<-data.sort(data.simu)
-  x<-data.rev[,grepl("model",names(data.rev))] #only those has model
-  n<-dim(data.rev)[1]
-  data_sub<-data.frame(t=data.rev$t,delta=data.rev$delta,x)
-  fit<-coxph(Surv(t,delta)~.,data=data_sub)
-  S_0_seq<-exp(fit$coefficients %*% t(x))
-  S_1_seq<-exp(fit$coefficients %*% t(x))*data.rev$I1
-  S_0<-cumsum(S_0_seq[n:1])[n:1]/n
-  S_1<-cumsum(S_1_seq[n:1])[n:1]/n
-  U<-sum(data.rev$delta*(data.rev$I1-S_1/S_0))
-  return(U)
-}
 
-# # Shao's bootstrap method + score test
-score_boot<-function(data.simu,randomization,p_trt,alpha=0.05,boot_n=200){
-  n<-dim(data.simu)[1]
-  U<-score_numerator(data.simu)
-  strata_z<-data.simu[,grepl("strata",names(data.simu))] 
-  minimization_z<-data.simu[,grepl("minimization",names(data.simu))] 
-  U.boot<-numeric(boot_n)
-  #boostrap variance
-  boot<-1
-  while(boot<=boot_n){
-    boot_ind<-sample(1:n, n, replace=TRUE)
-    data.boot<-data.simu[boot_ind,]
-    strata_z.boot<-strata_z[boot_ind,]
-    minimization_z.boot<-minimization_z[boot_ind,]
-    I.boot<-treatment_assignment(n,strata_z.boot,minimization_z.boot,randomization,p_trt)
-    data.boot$I1<-I.boot
-    data.boot$I0<-1-I.boot
-    tt <- tryCatch(score_numerator(data.boot),error=function(e) e, warning=function(w) w)
-    if(is(tt,"warning")) {next} # if warning exists, skip to the next run
-    U.boot[boot]<-tt
-    boot<-boot+1
-  }
-  var.boot<-var(U.boot)
-  T_SB<-U/sqrt(var.boot)
-  return(T_SB)
-}
 
-# bootstrap to construct reference distribution
-score_boot_distribution<-function(data.simu,randomization,p_trt,alpha=0.05,boot_n=200){
-  n<-dim(data.simu)[1]
-  U<-score_numerator(data.simu)
-  strata_z<-data.simu[,grepl("strata",names(data.simu))] 
-  minimization_z<-data.simu[,grepl("minimization",names(data.simu))] 
-  U.boot<-numeric(boot_n)
-  #boostrap variance
-  boot<-1
-  while(boot<=boot_n){
-    boot_ind<-sample(1:n, n, replace=TRUE)
-    data.boot<-data.simu[boot_ind,]
-    strata_z.boot<-strata_z[boot_ind,]
-    minimization_z.boot<-minimization_z[boot_ind,]
-    I.boot<-treatment_assignment(n,strata_z.boot,minimization_z.boot,randomization,p_trt)
-    data.boot$I1<-I.boot
-    data.boot$I0<-1-I.boot
-    tt <- tryCatch(score_numerator(data.boot),error=function(e) e, warning=function(w) w)
-    if(is(tt,"warning")) {next} # if warning exists, skip to the next run
-    U.boot[boot]<-tt
-    boot<-boot+1
-  }
-  U.boot.ordered<-sort(U.boot)
-  c1<-U.boot.ordered[ceiling(boot_n*alpha/2)]
-  c2<-U.boot.ordered[ceiling(boot_n*(1-alpha/2))+1]
-  TS_rej<-1*(U<c1 | U>c2)
-  return(TS_rej)
-}
-
-### Stratified permutation + score test (Bugni et al., 2018)
-score_permutation<-function(data.simu,alpha=0.05,boot_n=200){
-  U<-score_numerator(data.simu)
-  strata_z<-data.simu[,grepl("strata",names(data.simu))] 
-  z<-strata_z
-  score.p<-numeric(boot_n)
-  n_strata<-dim(z)[2]
-  n<-dim(z)[1]
-  data.tmp<-data.simu
-  for(boot in 1:boot_n){
-    for(s in 1:n_strata){
-      data.tmp$I1[strata_z[,s]==1]<-sample(data.simu$I1[strata_z[,s]==1]) # permute within strata
-    }
-    data.tmp$I0<-1-data.tmp$I1
-    score.p[boot]<-score_numerator(data.tmp)
-  }
-  score.p.ordered<-sort(score.p)
-  c1<-score.p.ordered[ceiling(boot_n*alpha/2)]
-  c2<-score.p.ordered[ceiling(boot_n*(1-alpha/2))+1]
-  score_SP_rej<-1*(U<c1 | U>c2)
-  return(score_SP_rej)
-}
-
-# randomization + score test 
-score_rand<-function(data.simu,randomization,p_trt,boot_n=200){
-  n<-dim(data.simu)[1]
-  U<-score_numerator(data.simu)
-  strata_z<-data.simu[,grepl("strata",names(data.simu))] 
-  minimization_z<-data.simu[,grepl("minimization",names(data.simu))] 
-  S.rand<-numeric(boot_n)
-  data.rand<-data.simu
-  for(boot in 1:boot_n){
-    I.rand<-treatment_assignment(n,strata_z,minimization_z,randomization,p_trt)
-    data.rand$I1<-I.rand
-    data.rand$I0<-1-I.rand
-    S.rand[boot]<-score_numerator(data.rand)
-  }
-  var.rand<-var(S.rand)
-  score_rand<-U/sqrt(var.rand)
-  return(score_rand)
-}
-
-# randomization test to construct reference distribution for score test 
-score_rand_distribution<-function(data.simu,randomization,p_trt,alpha=0.05,boot_n=200){
-  n<-dim(data.simu)[1]
-  U<-score_numerator(data.simu)
-  strata_z<-data.simu[,grepl("strata",names(data.simu))] 
-  minimization_z<-data.simu[,grepl("minimization",names(data.simu))] 
-  U.rand<-numeric(boot_n)
-  data.rand<-data.simu
-  for(boot in 1:boot_n){
-    I.rand<-treatment_assignment(n,strata_z,minimization_z,randomization,p_trt)
-    data.rand$I1<-I.rand
-    data.rand$I0<-1-I.rand
-    U.rand[boot]<-score_numerator(data.rand)
-  }
-  U.ordered<-sort(U.rand)
-  c1<-U.ordered[ceiling(boot_n*alpha/2)]
-  c2<-U.ordered[ceiling(boot_n*(1-alpha/2))+1]
-  TW_rej<-1*(U<c1 | U>c2)
-  return(TW_rej)
-}
 
 
