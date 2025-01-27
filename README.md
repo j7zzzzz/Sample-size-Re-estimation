@@ -16,24 +16,24 @@ In power_calculation.R and power_calculation_interim.R, the different cases corr
 
 **SIMULATION STUDIES**
 
-case1: Corresponds to case 1 in Section 5.1.<br>
-case2: Corresponds to case 2 in Section 5.1.<br>
-case3_K=3: Corresponds to case 3 in Section 5.1, with $Z_1$ discretized into three groups.<br>
-case3_K=4: Corresponds to case 3 in Section 5.1, with $Z_1$ discretized into four groups.<br>
-case4_K=3: Corresponds to case 4 in Section 5.1, with $Z_1$ following a three-category multinomial distribution.<br>
-case4_K=4: Corresponds to case 4 in Section 5.1, with $Z_1$ following a four-category multinomial distribution.<br>
-case5_K=3: Corresponds to case 5 in Section 5.1, with $Z_1$ following a three-category multinomial distribution.<br>
-case5_K=4: Corresponds to case 5 in Section 5.1, with $Z_1$ following a four-category multinomial distribution.<br>
+(1) case1: Corresponds to case 1 in Section 5.1.<br>
+(2) case2: Corresponds to case 2 in Section 5.1.<br>
+(3) case3_K=3: Corresponds to case 3 in Section 5.1, with $Z_1$ discretized into three groups.<br>
+(4) case3_K=4: Corresponds to case 3 in Section 5.1, with $Z_1$ discretized into four groups.<br>
+(5) case4_K=3: Corresponds to case 4 in Section 5.1, with $Z_1$ following a three-category multinomial distribution.<br>
+(6) case4_K=4: Corresponds to case 4 in Section 5.1, with $Z_1$ following a four-category multinomial distribution.<br>
+(7) case5_K=3: Corresponds to case 5 in Section 5.1, with $Z_1$ following a three-category multinomial distribution.<br>
+(8) case5_K=4: Corresponds to case 5 in Section 5.1, with $Z_1$ following a four-category multinomial distribution.<br>
 
 
 **REDESIGN CLINICAL TRIALS**
 
-caseR01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 1 in Section 5.1.<br>
-case3_R01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 3 in Section 5.1, and $Z_1$ discretized into three groups.<br>
-case4_R01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 4 in Section 5.1, and $Z_1$ following a three-category multinomial distribution.<br>
-case5_R01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 5 in Section 5.1, and $Z_1$ following a three-category multinomial distribution.<br>
+(1) caseR01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 1 in Section 5.1.<br>
+(2) case3_R01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 3 in Section 5.1, and $Z_1$ discretized into three groups.<br>
+(3) case4_R01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 4 in Section 5.1, and $Z_1$ following a three-category multinomial distribution.<br>
+(4) case5_R01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 5 in Section 5.1, and $Z_1$ following a three-category multinomial distribution.<br>
 
-caseL: Uses the parameters of the Lung Cancer trial from Section 6.2, with a design similar to case 2 in Section 5.1.<br>
-case3_L: Uses the parameters of the Lung Cancer trial from Section 6.2, with a design similar to case 3 in Section 5.1, and $Z_1$ discretized into four groups.<br>
-case4_L: Uses the parameters of the Lung Cancer trial from Section 6.2, with a design similar to case 4 in Section 5.1, and $Z_1$ following a four-category multinomial distribution.<br>
-case5_L: Uses the parameters of the Lung Cancer trial from Section 6.2, with a design similar to case 5 in Section 5.1, and $Z_1$ following a four-category multinomial distribution.
+(5) caseL: Uses the parameters of the Lung Cancer trial from Section 6.2, with a design similar to case 2 in Section 5.1.<br>
+(6) case3_L: Uses the parameters of the Lung Cancer trial from Section 6.2, with a design similar to case 3 in Section 5.1, and $Z_1$ discretized into four groups.<br>
+(7) case4_L: Uses the parameters of the Lung Cancer trial from Section 6.2, with a design similar to case 4 in Section 5.1, and $Z_1$ following a four-category multinomial distribution.<br>
+(8) case5_L: Uses the parameters of the Lung Cancer trial from Section 6.2, with a design similar to case 5 in Section 5.1, and $Z_1$ following a four-category multinomial distribution.
