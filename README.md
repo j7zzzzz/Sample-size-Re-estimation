@@ -13,6 +13,7 @@
 In power_calculation.R and power_calculation_interim.R, the different cases correspond to the following sections in the paper:
 
 
+
 **SIMULATION STUDIES**
 
 case1: Corresponds to case 1 in Section 5.1.<br>
@@ -26,6 +27,7 @@ case5_K=4: Corresponds to case 5 in Section 5.1, with $Z_1$ following a four-cat
 
 
 **REDESIGN CLINICAL TRIALS**
+
 caseR01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 1 in Section 5.1.<br>
 case3_R01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 3 in Section 5.1, and $Z_1$ discretized into three groups.<br>
 case4_R01: Uses the parameters of the RE01 trial from Section 6.1, with a design similar to case 4 in Section 5.1, and $Z_1$ following a three-category multinomial distribution.<br>
