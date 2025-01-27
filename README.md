@@ -1,4 +1,4 @@
-# Readme #
+# README #
 **1. all_function.R**: Contains all the functions used in this paper.
 
 **2. sample_size.R**: Contains the code for the sample size re-estimation formula proposed in this paper, which is used to calculate the required number of patients for the trial.
@@ -8,7 +8,7 @@
 **4. power_calculation_interim.R**: Used in the simulation studies and redesign clinical trials sections to validate the performance of our proposed sample size re-estimation method in trials with interim analysis.
 
 ---
-**Additional Information**:
+**5. Additional Information**:
 
 In power_calculation.R and power_calculation_interim.R, the different cases correspond to the following sections in the paper:
 
